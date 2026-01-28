@@ -9,19 +9,19 @@ import VideoModal from './components/VideoModal'
 const INTRO_VIDEO_ID = "-TwdL8AX8nY"
 
 const skills = [
-  { id: 1, name: "#1 Iniesta", youtubeId: "LR5-YxNWtqY" },
-  { id: 2, name: "#2 CR7 Chop", youtubeId: "F9OwMz2d_Vs" },
-  { id: 3, name: "#3 Roll Chop", youtubeId: "OWYWoLEtTro" },
-  { id: 4, name: "#4 Matthews-Scissors", youtubeId: "QwEBVPQ1Hos" },
-  { id: 5, name: "#5 Fake Pass", youtubeId: "3SPNTpPt8KY" },
-  { id: 6, name: "#6 Stop-Turn", youtubeId: "hg0cL6HFOyE" },
-  { id: 7, name: "#7 Step-over", youtubeId: "oJIjCqQFDlw" },
-  { id: 8, name: "#8 Drag-back", youtubeId: "eSTIiRr6nZk" },
-  { id: 9, name: "#9 Cruyff Turn", youtubeId: "mMYMRzLP3uY" },
-  { id: 10, name: "#10 Flick Behind", youtubeId: "tsI1s805nec" },
-  { id: 11, name: "#11 Zidane", youtubeId: "CbS13Y5EVdM" },
-  { id: 12, name: "#12 Matthews", youtubeId: "tcGAbP0GbSA" },
-  { id: 13, name: "Freestyle 4,9,3", youtubeId: "c2llFv4U0vw" },
+  { id: 1, name: "#1 Iniesta", youtubeId: "HTr_G-MCey0" },
+  { id: 2, name: "#2 CR7 Chop", youtubeId: "yAdRAAFgjvc" },
+  { id: 3, name: "#3 Roll Stop", youtubeId: "HIWE0C-4sAI" },
+  { id: 4, name: "#4 Matthews Scissors", youtubeId: "A5InjmC-j6Q" },
+  { id: 5, name: "#5 Fake Pass", youtubeId: "BwFJUCxGev0" },
+  { id: 6, name: "#6 Stop-turn", youtubeId: "bp9uCwgXcIo" },
+  { id: 7, name: "#7 Step-over", youtubeId: "ZrYxksC7juo" },
+  { id: 8, name: "#8 Drag Back", youtubeId: "K575SsiXfW0" },
+  { id: 9, name: "#9 Cruyff Turn", youtubeId: "FOgibHJTN84" },
+  { id: 10, name: "#10 Flick Behind", youtubeId: "fuM9Uikh5f0" },
+  { id: 11, name: "#11 Zidane", youtubeId: "oXUai_etCvI" },
+  { id: 12, name: "#12 Matthews", youtubeId: "Dzl672h-k5o" },
+  { id: 13, name: "Freestyle 4,9,3", youtubeId: "-0AR8Z6wlIA" },
   // =====================================================
   // ADD MORE SKILLS HERE:
   // { id: 14, name: "#13 Skill Name", youtubeId: "video-id" },
