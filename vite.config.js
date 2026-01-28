@@ -7,13 +7,13 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'ecfc-logo.png', 'skills-guide.pdf'],
+      includeAssets: ['favicon.ico', 'favicon-32x32.png', 'favicon-16x16.png', 'apple-touch-icon.png', 'ecfc-logo.png', 'skills-guide.pdf'],
       manifest: {
         name: 'Fast Feet Training',
         short_name: 'Fast Feet',
         description: 'ECFC Fast Feet Training - Practice soccer skills at home!',
-        theme_color: '#166534',
-        background_color: '#f0fdf4',
+        theme_color: '#2563eb',
+        background_color: '#eff6ff',
         display: 'standalone',
         orientation: 'portrait',
         scope: '/',

@@ -26,3 +26,6 @@ npm-debug.log*
 
 # PWA generated files
 dev-dist/
+
+# Scripts
+scripts/
