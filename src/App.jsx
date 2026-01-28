@@ -92,6 +92,19 @@ function App() {
               <span className="text-2xl">🚀</span>
               Start Training
             </button>
+
+            <a
+              href="/14-day-challenge.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full bg-ecfc-blue-500 text-white font-bold py-4 px-8 rounded-xl
+                         active:scale-95 transition-all duration-150 shadow-lg
+                         flex items-center justify-center gap-3 text-lg
+                         hover:bg-ecfc-blue-400"
+            >
+              <span className="text-2xl">🏆</span>
+              14 Day Challenge
+            </a>
           </div>
         </div>
 
