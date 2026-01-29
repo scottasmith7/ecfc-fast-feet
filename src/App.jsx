@@ -52,31 +52,45 @@ function App() {
   if (screen === 'welcome') {
     return (
       <div className="min-h-screen bg-ecfc-blue-600 flex flex-col">
-        <div className="flex-1 flex flex-col items-center justify-center px-6 py-10">
+        <div className="flex-1 flex flex-col items-center justify-center px-4 py-4">
           {/* Logo */}
           <img
             src="/ecfc-logo.png"
             alt="ECFC Logo"
-            className="h-32 w-32 object-contain mb-6"
+            className="h-20 w-20 object-contain mb-2"
           />
 
           {/* Title */}
-          <h1 className="text-4xl font-bold text-white text-center drop-shadow-lg mb-2">
+          <h1 className="text-2xl font-bold text-white text-center drop-shadow-lg mb-1">
             Fast Feet Training
           </h1>
-          <p className="text-ecfc-blue-100 text-xl text-center mb-10">
+          <p className="text-ecfc-blue-100 text-base text-center mb-3">
             Practice these skills at home! ⚽
           </p>
 
+          {/* Welcome Video */}
+          <div className="w-full max-w-xs mb-4">
+            <div className="relative w-full rounded-xl overflow-hidden shadow-lg" style={{ paddingBottom: '56.25%' }}>
+              <iframe
+                className="absolute top-0 left-0 w-full h-full"
+                src="https://www.youtube.com/embed/T_2Pw8C_yK4?autoplay=1&mute=1&loop=1&playlist=T_2Pw8C_yK4&playsinline=1"
+                title="Welcome Video"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </div>
+
           {/* Buttons */}
-          <div className="w-full max-w-xs space-y-4">
+          <div className="w-full max-w-xs space-y-3">
             <button
               onClick={handleIntroClick}
-              className="w-full bg-white text-ecfc-blue-600 font-bold py-4 px-8 rounded-xl
+              className="w-full bg-white text-ecfc-blue-600 font-bold py-3 px-6 rounded-xl
                          active:scale-95 transition-all duration-150 shadow-lg
-                         flex items-center justify-center gap-3 text-lg"
+                         flex items-center justify-center gap-2 text-base"
             >
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
               </svg>
               Watch Intro Video
@@ -84,12 +98,12 @@ function App() {
 
             <button
               onClick={() => setScreen('training')}
-              className="w-full bg-ecfc-green-500 text-white font-bold py-4 px-8 rounded-xl
+              className="w-full bg-ecfc-green-500 text-white font-bold py-3 px-6 rounded-xl
                          active:scale-95 transition-all duration-150 shadow-lg
-                         flex items-center justify-center gap-3 text-lg
+                         flex items-center justify-center gap-2 text-base
                          hover:bg-ecfc-green-400"
             >
-              <span className="text-2xl">🚀</span>
+              <span className="text-xl">🚀</span>
               Start Training
             </button>
 
@@ -97,12 +111,12 @@ function App() {
               href="/14-day-challenge.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full bg-ecfc-blue-500 text-white font-bold py-4 px-8 rounded-xl
+              className="w-full bg-ecfc-blue-500 text-white font-bold py-3 px-6 rounded-xl
                          active:scale-95 transition-all duration-150 shadow-lg
-                         flex items-center justify-center gap-3 text-lg
+                         flex items-center justify-center gap-2 text-base
                          hover:bg-ecfc-blue-400"
             >
-              <span className="text-2xl">🏆</span>
+              <span className="text-xl">🏆</span>
               14 Day Challenge
             </a>
           </div>
