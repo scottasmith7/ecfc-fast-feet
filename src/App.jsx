@@ -1,6 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import VideoCard from './components/VideoCard'
 import VideoModal from './components/VideoModal'
+import LoginScreen from './components/LoginScreen'
+import PlayerStats from './components/PlayerStats'
+import Leaderboard from './components/Leaderboard'
 
 // =====================================================
 // VIDEO CONFIGURATION
@@ -29,9 +32,34 @@ const skills = [
 ]
 
 function App() {
-  const [screen, setScreen] = useState('welcome') // 'welcome' or 'training'
+  const [screen, setScreen] = useState('welcome') // 'welcome', 'training', 'leaderboard'
   const [selectedVideo, setSelectedVideo] = useState(null)
   const [isIntro, setIsIntro] = useState(false)
+  const [player, setPlayer] = useState(null)
+  const [loadingPlayer, setLoadingPlayer] = useState(true)
+
+  // Check for saved player on mount
+  useEffect(() => {
+    const savedPlayer = localStorage.getItem('fastfeet_player')
+    if (savedPlayer) {
+      try {
+        setPlayer(JSON.parse(savedPlayer))
+      } catch (e) {
+        localStorage.removeItem('fastfeet_player')
+      }
+    }
+    setLoadingPlayer(false)
+  }, [])
+
+  const handleLogin = (playerData) => {
+    setPlayer(playerData)
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('fastfeet_player')
+    setPlayer(null)
+    setScreen('welcome')
+  }
 
   const handleVideoClick = (skill) => {
     setSelectedVideo(skill)
@@ -48,6 +76,25 @@ function App() {
     setIsIntro(false)
   }
 
+  // Show loading while checking for saved player
+  if (loadingPlayer) {
+    return (
+      <div className="min-h-screen bg-ecfc-blue-600 flex items-center justify-center">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
+    )
+  }
+
+  // Show login screen if no player
+  if (!player) {
+    return <LoginScreen onLogin={handleLogin} />
+  }
+
+  // Show leaderboard
+  if (screen === 'leaderboard') {
+    return <Leaderboard player={player} onClose={() => setScreen('welcome')} />
+  }
+
   // Welcome Screen
   if (screen === 'welcome') {
     return (
@@ -57,7 +104,7 @@ function App() {
           <img
             src="/ecfc-logo.png"
             alt="ECFC Logo"
-            className="h-20 w-20 object-contain mb-2"
+            className="h-16 w-16 object-contain mb-2"
           />
 
           {/* Title */}
@@ -67,6 +114,9 @@ function App() {
           <p className="text-ecfc-blue-100 text-base text-center mb-3">
             Practice these skills at home! ⚽
           </p>
+
+          {/* Player Stats & Check-in */}
+          <PlayerStats player={player} onLogout={handleLogout} />
 
           {/* Welcome Video */}
           <div className="w-full max-w-xs mb-4">
@@ -107,6 +157,17 @@ function App() {
               Start Training
             </button>
 
+            <button
+              onClick={() => setScreen('leaderboard')}
+              className="w-full bg-yellow-500 text-white font-bold py-3 px-6 rounded-xl
+                         active:scale-95 transition-all duration-150 shadow-lg
+                         flex items-center justify-center gap-2 text-base
+                         hover:bg-yellow-400"
+            >
+              <span className="text-xl">🏆</span>
+              Leaderboard
+            </button>
+
             <a
               href="/14-day-challenge.pdf"
               target="_blank"
@@ -116,7 +177,7 @@ function App() {
                          flex items-center justify-center gap-2 text-base
                          hover:bg-ecfc-blue-400"
             >
-              <span className="text-xl">🏆</span>
+              <span className="text-xl">📋</span>
               14 Day Challenge
             </a>
           </div>
