@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = 'https://ulapzyvarwwzktwgswfg.supabase.co'
-const supabaseAnonKey = 'sb_publishable_ORNJ0TdeIT6knO9jSdxJ5Q_927VanOE'
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsYXB6eXZhcnd3emt0d2dzd2ZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk3MjU4NzcsImV4cCI6MjA4NTMwMTg3N30.zZwj2AKgqo3Ru7ja7nBV7ZQlYc4Uv0KhZUGS3AXA9kY'
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
@@ -79,10 +79,10 @@ export async function checkIn(playerId) {
 
   // Check if already checked in today
   const { data: existing } = await supabase
-    .from('check_ins')
+    .from('checkins')
     .select('id')
     .eq('player_id', playerId)
-    .eq('check_in_date', today)
+    .eq('checkin_date', today)
     .single()
 
   if (existing) {
@@ -90,10 +90,10 @@ export async function checkIn(playerId) {
   }
 
   const { data, error } = await supabase
-    .from('check_ins')
+    .from('checkins')
     .insert([{
       player_id: playerId,
-      check_in_date: today
+      checkin_date: today
     }])
     .select()
     .single()
@@ -107,10 +107,10 @@ export async function hasCheckedInToday(playerId) {
   const today = new Date().toISOString().split('T')[0]
 
   const { data } = await supabase
-    .from('check_ins')
+    .from('checkins')
     .select('id')
     .eq('player_id', playerId)
-    .eq('check_in_date', today)
+    .eq('checkin_date', today)
     .single()
 
   return !!data
@@ -124,10 +124,10 @@ export async function hasCheckedInToday(playerId) {
 export async function getPlayerStats(playerId) {
   // Get all check-ins for the player
   const { data: checkIns, error } = await supabase
-    .from('check_ins')
-    .select('check_in_date')
+    .from('checkins')
+    .select('checkin_date')
     .eq('player_id', playerId)
-    .order('check_in_date', { ascending: false })
+    .order('checkin_date', { ascending: false })
 
   if (error) throw error
 
@@ -143,7 +143,7 @@ export async function getPlayerStats(playerId) {
     yesterday.setDate(yesterday.getDate() - 1)
 
     // Check if the most recent check-in is today or yesterday
-    const mostRecentDate = new Date(checkIns[0].check_in_date + 'T00:00:00')
+    const mostRecentDate = new Date(checkIns[0].checkin_date + 'T00:00:00')
 
     if (mostRecentDate >= yesterday) {
       streak = 1
@@ -151,7 +151,7 @@ export async function getPlayerStats(playerId) {
       expectedDate.setDate(expectedDate.getDate() - 1)
 
       for (let i = 1; i < checkIns.length; i++) {
-        const checkInDate = new Date(checkIns[i].check_in_date + 'T00:00:00')
+        const checkInDate = new Date(checkIns[i].checkin_date + 'T00:00:00')
         if (checkInDate.getTime() === expectedDate.getTime()) {
           streak++
           expectedDate.setDate(expectedDate.getDate() - 1)
@@ -180,9 +180,9 @@ export async function getLeaderboard() {
 
   // Get all check-ins
   const { data: allCheckIns, error: checkInsError } = await supabase
-    .from('check_ins')
-    .select('player_id, check_in_date')
-    .order('check_in_date', { ascending: false })
+    .from('checkins')
+    .select('player_id, checkin_date')
+    .order('checkin_date', { ascending: false })
 
   if (checkInsError) throw checkInsError
 
@@ -190,7 +190,7 @@ export async function getLeaderboard() {
   const leaderboard = players.map(player => {
     const playerCheckIns = allCheckIns
       .filter(c => c.player_id === player.id)
-      .map(c => c.check_in_date)
+      .map(c => c.checkin_date)
       .sort((a, b) => new Date(b) - new Date(a))
 
     const totalDays = playerCheckIns.length
