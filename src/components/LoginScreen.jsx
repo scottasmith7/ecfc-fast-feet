@@ -29,10 +29,13 @@ function LoginScreen({ onLogin }) {
     setLoading(true)
     try {
       const player = await loginPlayer(name, pin)
+      console.log('[LoginScreen] Login successful, player:', player)
+      console.log('[LoginScreen] Player ID:', player?.id)
       // Store in localStorage
       localStorage.setItem('fastfeet_player', JSON.stringify(player))
       onLogin(player)
     } catch (err) {
+      console.error('[LoginScreen] Login error:', err)
       setError(err.message)
     } finally {
       setLoading(false)
@@ -55,10 +58,13 @@ function LoginScreen({ onLogin }) {
     setLoading(true)
     try {
       const player = await registerPlayer(name, pin, teamAgeGroup || null)
+      console.log('[LoginScreen] Registration successful, player:', player)
+      console.log('[LoginScreen] Player ID:', player?.id)
       // Store in localStorage
       localStorage.setItem('fastfeet_player', JSON.stringify(player))
       onLogin(player)
     } catch (err) {
+      console.error('[LoginScreen] Registration error:', err)
       setError(err.message)
     } finally {
       setLoading(false)

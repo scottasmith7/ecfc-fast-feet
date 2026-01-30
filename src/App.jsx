@@ -41,10 +41,15 @@ function App() {
   // Check for saved player on mount
   useEffect(() => {
     const savedPlayer = localStorage.getItem('fastfeet_player')
+    console.log('[App] Loading saved player from localStorage:', savedPlayer)
     if (savedPlayer) {
       try {
-        setPlayer(JSON.parse(savedPlayer))
+        const parsed = JSON.parse(savedPlayer)
+        console.log('[App] Parsed player:', parsed)
+        console.log('[App] Player ID:', parsed?.id)
+        setPlayer(parsed)
       } catch (e) {
+        console.error('[App] Failed to parse saved player:', e)
         localStorage.removeItem('fastfeet_player')
       }
     }
@@ -52,6 +57,8 @@ function App() {
   }, [])
 
   const handleLogin = (playerData) => {
+    console.log('[App] Player logged in:', playerData)
+    console.log('[App] Player ID:', playerData?.id)
     setPlayer(playerData)
   }
 

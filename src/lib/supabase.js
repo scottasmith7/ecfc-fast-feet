@@ -12,6 +12,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 // Register a new player
 export async function registerPlayer(name, pin, teamAgeGroup = null) {
   const normalizedName = name.trim().toLowerCase()
+  console.log('[registerPlayer] Registering:', name)
 
   // Check if player already exists
   const { data: existing } = await supabase
@@ -35,13 +36,19 @@ export async function registerPlayer(name, pin, teamAgeGroup = null) {
     .select()
     .single()
 
-  if (error) throw error
+  if (error) {
+    console.error('[registerPlayer] Error:', error)
+    throw error
+  }
+  console.log('[registerPlayer] Success, player data:', data)
+  console.log('[registerPlayer] Player ID:', data?.id)
   return data
 }
 
 // Login an existing player
 export async function loginPlayer(name, pin) {
   const normalizedName = name.trim().toLowerCase()
+  console.log('[loginPlayer] Logging in:', name)
 
   const { data, error } = await supabase
     .from('players')
@@ -51,9 +58,12 @@ export async function loginPlayer(name, pin) {
     .single()
 
   if (error || !data) {
+    console.error('[loginPlayer] Error:', error)
     throw new Error('Name or PIN is incorrect. Please try again!')
   }
 
+  console.log('[loginPlayer] Success, player data:', data)
+  console.log('[loginPlayer] Player ID:', data?.id)
   return data
 }
 
@@ -77,12 +87,24 @@ export async function getPlayer(playerId) {
 export async function checkIn(playerId) {
   const today = new Date().toISOString().split('T')[0]
 
+  console.log('[CheckIn] Attempting check-in for player:', playerId)
+  console.log('[CheckIn] Date:', today)
+
+  // Validate player ID
+  if (!playerId) {
+    console.error('[CheckIn] ERROR: No player ID provided')
+    throw new Error('No player ID provided. Please log out and log back in.')
+  }
+
   // First check if already checked in today
   const alreadyCheckedIn = await hasCheckedInToday(playerId)
+  console.log('[CheckIn] Already checked in today?', alreadyCheckedIn)
+
   if (alreadyCheckedIn) {
     throw new Error('already_checked_in')
   }
 
+  console.log('[CheckIn] Inserting check-in record...')
   const { data, error } = await supabase
     .from('checkins')
     .insert([{
@@ -92,13 +114,19 @@ export async function checkIn(playerId) {
     .select()
     .single()
 
+  console.log('[CheckIn] Insert result - data:', data)
+  console.log('[CheckIn] Insert result - error:', error)
+
   // Handle unique constraint violation (race condition protection)
   if (error) {
+    console.error('[CheckIn] Database error:', error.code, error.message, error.details, error.hint)
     if (error.code === '23505' || error.message?.includes('duplicate') || error.message?.includes('unique')) {
       throw new Error('already_checked_in')
     }
-    throw error
+    throw new Error(`Check-in failed: ${error.message || 'Unknown database error'}`)
   }
+
+  console.log('[CheckIn] Success! Check-in saved:', data)
   return data
 }
 
@@ -106,12 +134,16 @@ export async function checkIn(playerId) {
 export async function hasCheckedInToday(playerId) {
   const today = new Date().toISOString().split('T')[0]
 
-  const { data } = await supabase
+  console.log('[hasCheckedInToday] Checking for player:', playerId, 'date:', today)
+
+  const { data, error } = await supabase
     .from('checkins')
     .select('id')
     .eq('player_id', playerId)
     .eq('checkin_date', today)
     .single()
+
+  console.log('[hasCheckedInToday] Result - data:', data, 'error:', error)
 
   return !!data
 }

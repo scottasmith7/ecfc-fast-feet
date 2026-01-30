@@ -18,21 +18,27 @@ function PlayerStats({ player, onLogout }) {
   const [loading, setLoading] = useState(true)
   const [checkingIn, setCheckingIn] = useState(false)
   const [justCheckedIn, setJustCheckedIn] = useState(false)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     loadStats()
   }, [player.id])
 
   const loadStats = async () => {
+    console.log('[PlayerStats] Loading stats for player:', player)
+    console.log('[PlayerStats] Player ID:', player?.id)
     try {
       const [playerStats, alreadyCheckedIn] = await Promise.all([
         getPlayerStats(player.id),
         hasCheckedInToday(player.id)
       ])
+      console.log('[PlayerStats] Stats loaded:', playerStats)
+      console.log('[PlayerStats] Already checked in:', alreadyCheckedIn)
       setStats(playerStats)
       setCheckedIn(alreadyCheckedIn)
     } catch (err) {
-      console.error('Error loading stats:', err)
+      console.error('[PlayerStats] Error loading stats:', err)
+      setError('Failed to load stats. Please refresh.')
     } finally {
       setLoading(false)
     }
@@ -43,25 +49,42 @@ function PlayerStats({ player, onLogout }) {
     if (checkedIn || checkingIn) return
 
     setCheckingIn(true)
+    setError(null)
+
+    console.log('[PlayerStats] Starting check-in for player:', player?.name, 'ID:', player?.id)
+
+    // Validate player object
+    if (!player?.id) {
+      console.error('[PlayerStats] ERROR: No player ID available!')
+      console.error('[PlayerStats] Player object:', player)
+      setError('Player ID missing. Please log out and log back in.')
+      setCheckingIn(false)
+      return
+    }
+
     try {
       // Re-verify check-in status before attempting
       const alreadyDone = await hasCheckedInToday(player.id)
       if (alreadyDone) {
+        console.log('[PlayerStats] Already checked in today')
         setCheckedIn(true)
         return
       }
 
+      console.log('[PlayerStats] Calling checkIn with player.id:', player.id)
       await checkIn(player.id)
+      console.log('[PlayerStats] Check-in successful!')
       setCheckedIn(true)
       setJustCheckedIn(true)
       // Refresh stats
       const newStats = await getPlayerStats(player.id)
       setStats(newStats)
     } catch (err) {
+      console.error('[PlayerStats] Check-in error:', err)
       if (err.message === 'already_checked_in') {
         setCheckedIn(true)
       } else {
-        console.error('Check-in error:', err)
+        setError(err.message || 'Check-in failed. Please try again.')
       }
     } finally {
       setCheckingIn(false)
@@ -127,42 +150,77 @@ function PlayerStats({ player, onLogout }) {
         </p>
       </div>
 
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-500/20 border border-red-400 text-red-200 px-4 py-3 rounded-xl mb-3 text-sm">
+          {error}
+        </div>
+      )}
+
+      {/* Check-in Reminder */}
+      <div className="text-center mb-3">
+        {checkedIn ? (
+          <p className="text-ecfc-green-300 font-bold text-lg">
+            ✅ Great job! You checked in today!
+          </p>
+        ) : (
+          <p className="text-yellow-300 font-bold text-lg animate-pulse">
+            🎯 Don't forget to check in after you practice!
+          </p>
+        )}
+      </div>
+
       {/* Check-in Button */}
       {checkedIn ? (
-        <div className={`w-full bg-ecfc-green-500/20 border-2 border-ecfc-green-400
-                        text-ecfc-green-300 font-bold py-3 px-6 rounded-xl
-                        flex items-center justify-center gap-2 text-base
-                        ${justCheckedIn ? 'animate-pulse' : ''}`}>
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+        <div className={`w-full bg-gray-500/30 border-2 border-gray-400
+                        text-gray-300 font-bold py-4 px-6 rounded-2xl
+                        flex items-center justify-center gap-3 text-lg
+                        ${justCheckedIn ? 'animate-bounce' : ''}`}>
+          <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
           </svg>
-          {justCheckedIn ? "You're checked in! Great job! 🎉" : "Already checked in today ✓"}
+          <span>CHECKED IN ✓</span>
         </div>
       ) : (
         <button
           onClick={handleCheckIn}
           disabled={checkingIn}
           className="w-full bg-gradient-to-r from-ecfc-green-500 to-ecfc-green-400
-                     text-white font-bold py-3 px-6 rounded-xl
-                     active:scale-95 transition-all duration-150 shadow-lg
-                     flex items-center justify-center gap-2 text-base
-                     disabled:opacity-50 animate-pulse hover:animate-none"
+                     text-white font-extrabold py-5 px-6 rounded-2xl
+                     active:scale-95 transition-all duration-150
+                     shadow-lg shadow-ecfc-green-500/50
+                     flex items-center justify-center gap-3 text-xl
+                     disabled:opacity-50
+                     hover:from-ecfc-green-400 hover:to-ecfc-green-300
+                     border-2 border-ecfc-green-300"
         >
           {checkingIn ? (
-            <span className="flex items-center gap-2">
-              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+            <span className="flex items-center gap-3">
+              <svg className="animate-spin h-7 w-7" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
-              Checking in...
+              CHECKING IN...
             </span>
           ) : (
             <>
-              <span className="text-xl">⚽</span>
-              Check In Today!
+              <span className="text-2xl">⚽</span>
+              CHECK IN TODAY
             </>
           )}
         </button>
+      )}
+
+      {/* Helper text for new users */}
+      {!checkedIn && (
+        <p className="text-ecfc-blue-200 text-xs text-center mt-2">
+          Tap to log your daily training
+        </p>
+      )}
+      {checkedIn && justCheckedIn && (
+        <p className="text-ecfc-green-300 text-sm text-center mt-2 animate-pulse">
+          🌟 Amazing! Keep up the great work! 🌟
+        </p>
       )}
     </div>
   )
