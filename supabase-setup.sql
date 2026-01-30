@@ -49,3 +49,9 @@ CREATE POLICY "Allow public to insert checkins" ON checkins
 -- =====================================================
 -- DONE! Your database is ready for the Fast Feet app.
 -- =====================================================
+
+-- =====================================================
+-- IF YOUR TABLE ALREADY EXISTS without the unique constraint,
+-- run this to add it:
+-- =====================================================
+-- ALTER TABLE checkins ADD CONSTRAINT checkins_player_date_unique UNIQUE (player_id, checkin_date);

@@ -39,8 +39,18 @@ function PlayerStats({ player, onLogout }) {
   }
 
   const handleCheckIn = async () => {
+    // Double-check we haven't already checked in (prevents duplicate clicks)
+    if (checkedIn || checkingIn) return
+
     setCheckingIn(true)
     try {
+      // Re-verify check-in status before attempting
+      const alreadyDone = await hasCheckedInToday(player.id)
+      if (alreadyDone) {
+        setCheckedIn(true)
+        return
+      }
+
       await checkIn(player.id)
       setCheckedIn(true)
       setJustCheckedIn(true)

@@ -77,15 +77,9 @@ export async function getPlayer(playerId) {
 export async function checkIn(playerId) {
   const today = new Date().toISOString().split('T')[0]
 
-  // Check if already checked in today
-  const { data: existing } = await supabase
-    .from('checkins')
-    .select('id')
-    .eq('player_id', playerId)
-    .eq('checkin_date', today)
-    .single()
-
-  if (existing) {
+  // First check if already checked in today
+  const alreadyCheckedIn = await hasCheckedInToday(playerId)
+  if (alreadyCheckedIn) {
     throw new Error('already_checked_in')
   }
 
@@ -98,7 +92,13 @@ export async function checkIn(playerId) {
     .select()
     .single()
 
-  if (error) throw error
+  // Handle unique constraint violation (race condition protection)
+  if (error) {
+    if (error.code === '23505' || error.message?.includes('duplicate') || error.message?.includes('unique')) {
+      throw new Error('already_checked_in')
+    }
+    throw error
+  }
   return data
 }
 
